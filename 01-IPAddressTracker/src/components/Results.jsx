@@ -1,5 +1,9 @@
 /* eslint-disable */
 export default function Results({ipData}) {
+  
+  if(ipData)
+    ipData.timezone = ipData.timezone.replace(/\//g, ", ")
+   
 
   return (
     <>

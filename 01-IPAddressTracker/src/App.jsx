@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import arrowIMG from './images/icon-arrow.svg'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import Results from '../../pruebaMapa/src/components/Results';
+import Results from './components/Results';
 const GEO_IP_KEY = '4b0e602accf285';
 
 function App() {
