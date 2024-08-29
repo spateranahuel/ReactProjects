@@ -1,14 +1,20 @@
 import './App.css'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import arrowIMG from './images/icon-arrow.svg'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Results from './components/Results';
-const GEO_IP_KEY = '4b0e602accf285';
+import {useGetIpData} from './hooks/useGetIpData'
+
+
+
+
+
+
 
 function App() {
-  const [ipData, setIpData] = useState(null);
 
+  const {ipData, getData} = useGetIpData()
   const mapRef = useRef(null);
   const markerRef = useRef(null)
 
@@ -40,7 +46,7 @@ function App() {
       const [lat, lng] = ipData.loc.split(',');
       mapRef.current.setView([lat, lng], 13);
       
-      
+
       if(markerRef.current)
         markerRef.current.remove()
 
@@ -57,9 +63,7 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const ip = e.target[0].value;
-    fetch(`https://ipinfo.io/${ip}?token=${GEO_IP_KEY}`)
-      .then(res => res.json())
-      .then(data => setIpData(data));
+    getData(ip)
   }
 
   return (
