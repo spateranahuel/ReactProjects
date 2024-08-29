@@ -13,51 +13,46 @@ function App() {
   const markerRef = useRef(null)
 
 
+  useEffect(() =>{
+    // Create the map instance
+    mapRef.current = L.map('map').setView([34,-117],13)
+  
+    console.log(mapRef.current)
+    // Establecer los límites del mapa
+    const bounds = L.latLngBounds(
+      L.latLng(-85, -180), // Sudoeste
+      L.latLng(85, 180)    // Noreste
+    );
+    mapRef.current.setMaxBounds(bounds);
+    // Añadir una capa de mapa (OpenStreetMap en este caso) con opciones para evitar la repetición
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      noWrap: true, // Evita la repetición de teselas
+      minZoom: 3,   // Establece un nivel de zoom mínimo
+    }).addTo(mapRef.current);
+  },[])
+
+
 
   useEffect(() => {
-    // Initialize the map
-    if (!mapRef.current) {
-      const lat = 34.0553;
-      const lng = -117.7523;
-
-      // Create the map instance
-      mapRef.current = L.map('map').setView([lat, lng], 13);
-
-      // Establecer los límites del mapa
-      const bounds = L.latLngBounds(
-        L.latLng(-85, -180), // Sudoeste
-        L.latLng(85, 180)    // Noreste
-      );
-
-      mapRef.current.setMaxBounds(bounds);
-
-
-      // Añadir una capa de mapa (OpenStreetMap en este caso) con opciones para evitar la repetición
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        noWrap: true, // Evita la repetición de teselas
-        minZoom: 3,   // Establece un nivel de zoom mínimo
-      }).addTo(mapRef.current);
-
+    // Update the map view if it already exists
+    if (ipData && ipData.loc) {
+      const [lat, lng] = ipData.loc.split(',');
+      mapRef.current.setView([lat, lng], 13);
+      
+      
+      if(markerRef.current)
+        markerRef.current.remove()
 
       markerRef.current = L.marker([lat, lng])
-      // Add a marker
       markerRef.current.addTo(mapRef.current)
-        .bindPopup('Ubicación: 34.0553, -117.7523')
+        .bindPopup(`Ubicación: ${lat}, ${lng}`)
         .openPopup();
-    } else {
-      // Update the map view if it already exists
-      if (ipData && ipData.loc) {
-        const [lat, lng] = ipData.loc.split(',');
-        mapRef.current.setView([lat, lng], 13);
-        markerRef.current.remove()
-        markerRef.current = L.marker([lat, lng])
-        markerRef.current.addTo(mapRef.current)
-          .bindPopup(`Ubicación: ${lat}, ${lng}`)
-          .openPopup();
-      }
     }
   }, [ipData]);
+
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
